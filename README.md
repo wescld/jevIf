@@ -117,3 +117,7 @@ Em breve. Tá rodando enquanto o Jev achar que faz sentido.
 ## Como funciona
 
 Cada `jevIf` faz uma pergunta do tipo [`noul`](https://docs.typesafe.ai/primitives/noul) (sim/não com probabilidade) na [API da TypeSafe](https://docs.typesafe.ai/api) e compara a resposta com o `threshold`. O `jevSwitch` faz o mesmo com várias perguntas numa chamada só. É isso.
+
+## Licença
+
+MIT. Faça o que quiser, inclusive perguntar ao Jev se deveria.
