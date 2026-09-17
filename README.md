@@ -1,123 +1,123 @@
 # jevIf
 
-> O `if` foi inventado em 1957. Tava na hora de ele ter bom senso.
+> The `if` statement was invented in 1957. It's about time it got some common sense.
 
-`jevIf` substitui o `if` pelo [Jev](https://docs.typesafe.ai), o modelo System One da TypeSafe. Em vez de comparar valores, você pergunta.
+`jevIf` replaces `if` with [Jev](https://docs.typesafe.ai), TypeSafe's System One model. Instead of comparing values, you just ask.
 
 ```js
-// antes
-if (msg.includes("ótimo") && msg.includes("🙃") && isFriday() && hour >= 18) {
-  // provavelmente sarcasmo?? talvez??
+// before
+if (msg.includes("great") && msg.includes("🙃") && isFriday() && hour >= 18) {
+  // probably sarcasm?? maybe??
 }
 
-// depois
-if (await jevIf`${msg} é sarcasmo?`) {
-  chamarORH();
+// after
+if (await jevIf`is ${msg} sarcastic?`) {
+  callHR();
 }
 ```
 
-**1 arquivo · 0 dependências · 100% vibes**
+**1 file · 0 dependencies · 100% vibes**
 
 ---
 
-## Instalação
+## Install
 
-Copia o arquivo. Sério, é um arquivo só.
+Copy the file. Seriously, it's one file.
 
 ```bash
 curl -O https://raw.githubusercontent.com/wescld/jevIf/main/jevIf.js
-export TYPESAFE_API_KEY=sua-chave
+export TYPESAFE_API_KEY=your-key
 ```
 
-Roda em Node 18+, Bun e Deno. Não use no browser: a chave vazaria.
+Runs on Node 18+, Bun and Deno. Don't use it in the browser: your key would leak.
 
-## Uso
+## Usage
 
-### `jevIf` com template string
+### `jevIf` as a template string
 
-Os valores em `${}` viram contexto separado. A pergunta aponta pra eles, e o texto não é só colado na pergunta.
+Values inside `${}` are sent as separate context. The question points to them instead of just pasting the text into the question.
 
 ```js
 import jevIf from "./jevIf.js";
 
-if (await jevIf`${email} é golpe?`) moverPraLixeira(email);
-if (await jevIf`${commit.message} descreve o que ${commit.diff} faz?`) aprovar();
+if (await jevIf`is ${email} a scam?`) moveToTrash(email);
+if (await jevIf`does ${commit.message} describe what ${commit.diff} does?`) approve();
 ```
 
-### `jevIf` como função
+### `jevIf` as a function
 
 ```js
-if (await jevIf("O cliente quer cancelar a assinatura?", ticket)) {
-  oferecerDesconto();
+if (await jevIf("Does the customer want to cancel their subscription?", ticket)) {
+  offerDiscount();
 }
 
-// pra decisões com consequência, peça mais certeza
-if (await jevIf("Isso é spam?", comentario, { threshold: 0.9 })) apagar(comentario);
+// for decisions with consequences, ask for more certainty
+if (await jevIf("Is this spam?", comment, { threshold: 0.9 })) remove(comment);
 
-// deixe claro o que conta como "sim"
-await jevIf("O candidato sabe Python?", curriculo, {
-  criteria: { true: "Usou Python em trabalho real", false: "Só citou num curso" },
+// spell out what counts as "yes"
+await jevIf("Does the candidate know Python?", resume, {
+  criteria: { true: "Used Python in real work", false: "Only mentioned it in a course" },
 });
 ```
 
-O `state` pode ser string ou objeto (vai como JSON).
+`state` can be a string or an object (sent as JSON).
 
-### `jevIf.prob`: a dúvida do Jev
+### `jevIf.prob`: Jev's doubt
 
 ```js
-await jevIf.prob("Isso é sarcasmo?", msg); // 0.93
+await jevIf.prob("Is this sarcasm?", msg); // 0.93
 ```
 
-### `jevSwitch`: else if, mas com vibes
+### `jevSwitch`: else if, but with vibes
 
-Todas as condições vão **numa única requisição**. Roda a primeira que der "sim".
+All conditions go out in **a single request**. The first one that comes back "yes" runs.
 
 ```js
 import { jevSwitch } from "./jevIf.js";
 
 await jevSwitch(msg, {
-  "A pessoa está pedindo demissão?": () => abrirVaga(),
-  "A pessoa está frustrada com o trabalho?": () => mandarCafe(),
-}, () => console.log("tudo certo, aparentemente"));
+  "Is this person quitting?": () => openJobPosting(),
+  "Is this person frustrated with work?": () => sendCoffee(),
+}, () => console.log("all good, apparently"));
 ```
 
-## Opções
+## Options
 
-| Opção | Padrão | O que faz |
+| Option | Default | What it does |
 | --- | --- | --- |
-| `threshold` | `0.5` | P(sim) mínima pra dar `true` |
-| `criteria` | — | `{ true, false }` explicando cada lado |
-| `model` | `"jev-latest"` | Modelo da TypeSafe |
-| `apiKey` | `process.env.TYPESAFE_API_KEY` | Sua chave |
+| `threshold` | `0.5` | Minimum P(yes) to return `true` |
+| `criteria` | — | `{ true, false }` describing each side |
+| `model` | `"jev-latest"` | TypeSafe model |
+| `apiKey` | `process.env.TYPESAFE_API_KEY` | Your key |
 
 ## Benchmark
 
 | | `if` | `jevIf` |
 | --- | --- | --- |
-| Latência | ~1 ns | ~150 ms |
-| Custo | grátis | não é grátis |
-| Entende sarcasmo | ❌ | ✅ |
-| Entende `===` vs `==` | mais ou menos | não é o foco |
+| Latency | ~1 ns | ~150 ms |
+| Cost | free | not free |
+| Understands sarcasm | ❌ | ✅ |
+| Understands `===` vs `==` | kind of | not its focus |
 | Vibes | 0 | ∞ |
 
 ## FAQ
 
-**Devo usar isso em produção?**
-`await jevIf("Devo usar isso em produção?", seuCodigo)`
+**Should I use this in production?**
+`await jevIf("Should I use this in production?", yourCode)`
 
-**E se o Jev errar?**
-Ele devolve probabilidades, não verdades. Ajuste o `threshold` com dados reais e mantenha um humano no loop quando o erro custar caro.
+**What if Jev is wrong?**
+It returns probabilities, not truths. Tune `threshold` on real data and keep a human in the loop when mistakes are expensive.
 
-**Posso usar pra `x > 5`?**
-Pode. Não deve. Use o `if`, ele continua disponível e trabalhando muito bem.
+**Can I use it for `x > 5`?**
+You can. You shouldn't. Use `if`, it's still around and doing great.
 
-**Vai ter `jevWhile`?**
-Em breve. Tá rodando enquanto o Jev achar que faz sentido.
+**Will there be a `jevWhile`?**
+Coming soon. It runs for as long as Jev thinks it makes sense.
 
-## Como funciona
+## How it works
 
-Cada `jevIf` faz uma pergunta do tipo [`noul`](https://docs.typesafe.ai/primitives/noul) (sim/não com probabilidade) na [API da TypeSafe](https://docs.typesafe.ai/api) e compara a resposta com o `threshold`. O `jevSwitch` faz o mesmo com várias perguntas numa chamada só. É isso.
+Each `jevIf` asks a [`noul`](https://docs.typesafe.ai/primitives/noul) question (yes/no with a probability) through the [TypeSafe API](https://docs.typesafe.ai/api) and compares the answer to `threshold`. `jevSwitch` does the same with several questions in one call. That's it.
 
-## Licença
+## License
 
-MIT. Faça o que quiser, inclusive perguntar ao Jev se deveria.
+MIT. Do whatever you want, including asking Jev whether you should.
